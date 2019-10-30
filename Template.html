@@ -1,0 +1,69 @@
+{% for book in books %}
+<div class="post">
+	<div class="postTitle">
+		<h1 itemprop="name">
+			{{ book.title }}
+		</h1>
+	</div>
+
+	<div class="postInfo">
+		<p>Category: {{ book.categories }}</p>
+		<p>Language: {{ book.language }}</p>
+	</div>
+
+	<div class="postImage">
+		<a href="{{ book.link }}">
+			<img src="{{ book.cover }}" width="400">
+		</a>
+	</div>
+
+	<div class="postContent">
+		<div class="desc">
+			<p>Written by {{ book.author }}</p>
+			<p>Read by {{ book.read }}</p>
+            {% if book.audio_format %}
+			    <p>Format: {{ book.audio_format }}</p>
+            {% endif %}
+            {% if book.unabridged %}
+			    <p>Bitrate: {{ book.bitrate }}</p>
+            {% endif %}
+            {% if book.unabridged %}
+                <p>Unabridged</p>
+            {% endif %}
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+<style>
+	.post {
+    	margin-bottom: 25px;
+    	width: 470px;
+    	overflow: hidden;
+	}
+	.postTitle h1, .postTitle h2 {
+    	font: normal normal 26px Georgia, "Times New Roman", serif;
+    	color: #d90202;
+    	padding: 0 0 5px 0;
+    	border-bottom: 3px solid #ddd;
+    	margin: 0 0 5px 0;
+		text-align: center;
+	}
+	.postInfo {
+    	font-size: 16px;
+		font-weight: bold;
+    	line-height: 1.5em;
+	}
+	.postContent {
+    	margin-top: 10px;
+    	margin-bottom: 10px;
+		font-size: 14px;
+    	line-height: 14px;
+    	width: 470px;
+    	overflow: hidden;
+	}
+	.postImage {
+    	text-align: center;
+    	overflow: hidden;
+	}
+</style>
