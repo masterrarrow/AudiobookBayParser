@@ -35,15 +35,18 @@ def get_page(period: datetime.date, url: str):
     # For all posts
     for post in posts:
         # Get new books only for the certain period of time
-        audio_data = post.find('p', {'style': 'text-align:center;'}).text
-        # Get book post publication date
-        date_time_str, _ = audio_data.split('Format:')
-        date_time_str = date_time_str[8:]
-        post_data = datetime.strptime(date_time_str, '%d %b %Y')
-        post_data = post_data.date()
+        try:
+            audio_data = post.find('p', {'style': 'text-align:center;'}).text
+            # Get book post publication date
+            date_time_str, _ = audio_data.split('Format:')
+            date_time_str = date_time_str[8:]
+            post_data = datetime.strptime(date_time_str, '%d %b %Y')
+            post_data = post_data.date()
 
-        if post_data >= period:
-            page_url.append(post.findAll('p', {'class': 'center'})[1].find('a').get('href'))
+            if post_data >= period:
+                page_url.append(post.findAll('p', {'class': 'center'})[1].find('a').get('href'))
+        except:
+            pass
 
     return page_url
 
@@ -210,12 +213,13 @@ def main(books_category: str, pages_count: int, period: datetime.date, save_to_w
 
     # Flatten a list of lists, exclude empty lists
     books_urls = [item for sublist in books_urls if len(sublist) != 0 for item in sublist]
+    date = datetime.today().date()
 
     if len(books_urls) == 0:
-        logging.log(logging.INFO, 'New books has not been found!')
+        logging.log(logging.INFO, f'{date}: New books has not been found!')
         exit(0)
 
-    logging.log(logging.INFO, 'New books has been found!')
+    logging.log(logging.INFO, f'{date}: New books has been found!')
 
     # Get books information
     param = partial(process_book_page, save_to_word)
@@ -229,18 +233,18 @@ def main(books_category: str, pages_count: int, period: datetime.date, save_to_w
         for result in results:
             if not result['saved']:
                 data = result['book']
-                logging.log(logging.ERROR, 'Saving book ', data.title, ' has been failed!')
+                logging.log(logging.ERROR, f'{date}: Saving book ', data.title, ' has been failed!')
                 exit(0)
-        logging.log(logging.INFO, 'All new books has been successfully saved!')
+        logging.log(logging.INFO, f'{date}: All new books has been successfully saved!')
     else:
         # Send email with retrieved information
         books = [result['book'] for result in results]
 
         if not send_notification(books):
-            logging.log(logging.ERROR, 'Sending newsletter has been failed')
+            logging.log(logging.ERROR, f'{date}: Sending newsletter has been failed')
             exit(0)
 
-        logging.log(logging.INFO, 'Newsletter has been send!')
+        logging.log(logging.INFO, f'{date}: Newsletter has been send!')
 
 
 if __name__ == '__main__':
